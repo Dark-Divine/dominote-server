@@ -3,7 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './base/configs/env.validation';
 import databaseConfig from './base/configs/database.config';
 import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './users/users.module';
+import { WorkspaceModule } from './workspace/workspace.module';
+import { ProjectModule } from './project/project.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -13,7 +15,9 @@ import { UsersModule } from './users/users.module';
       load: [databaseConfig],
     }),
     DatabaseModule,
-    UsersModule,
+    UserModule,
+    WorkspaceModule,
+    ProjectModule,
   ],
 })
 export class AppModule {}

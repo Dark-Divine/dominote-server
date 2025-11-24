@@ -1,67 +1,78 @@
-## Dominote Server
+# Dominote API
 
-Production-ready NestJS service wired to Neon/PostgreSQL via Drizzle ORM. The project includes typed schema definitions, a global database module, and scripts for generating and pushing migrations with drizzle-kit.
+### Dominote | Team & Project Management Open Source API
 
-## Getting started
+Dominote is an open-source API designed to simplify team collaboration and project management. It offers robust features for task tracking, resource allocation, and real-time updates, making it ideal for developers and teams building scalable applications.
 
-```bash
-# install dependencies
-pnpm install
-```
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-green.svg)](https://nodejs.org/)
+[![pnpm Version](https://img.shields.io/badge/pnpm-%3E%3D8-orange.svg)](https://pnpm.io/)
 
-Use `.env.example` and edit with your environment variables
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Database Workflow](#database-workflow)
+- [Running the API](#running-the-api)
+- [Contributing](#contributing)
 
-Essential environment variables:
+## Features
+- **Task Management:** Create, assign, and monitor tasks with priorities and deadlines.
+- **Team Collaboration:** Real-time notifications, comments, and user roles.
+- **Project Tracking:** Dashboards with progress visuals and analytics.
+- **Secure Authentication:** JWT-based access control.
+- **Database Integration:** Seamless support for PostgreSQL via Drizzle ORM.
+- **Extensible:** Easy to customize and integrate with front-end frameworks.
 
-| Name | Description |
-| --- | --- |
-| `DATABASE_URL` | Full Neon connection string (`postgresql://...` with `sslmode=require`). |
-| `DATABASE_SSL` | Set to `true` for Neon. |
-| `DATABASE_SSL_REJECT_UNAUTHORIZED` | Set to `false` for Neon unless you load CA certs. |
-| `DATABASE_MAX_CONNECTIONS` | Pool size (Neon suggests 5–10 for free tiers). |
-| `DATABASE_LOG_QUERIES` | Enable verbose Drizzle logging in dev. |
+## Prerequisites
+- Node.js (v18 or higher)
+- pnpm (v8 or higher)
+- PostgreSQL database (local or cloud-hosted like Neon)
+- Git
 
-## Database workflow
+## Getting Started
 
-```bash
-# generate SQL migrations from the Drizzle schema
-pnpm db:generate
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/Dark-Divine/dominote-server.git
+   cd dominote-server
+   ```
 
-# push migrations to Neon/PostgreSQL
-pnpm db:migrate
+2. **Install Dependencies**  
+   ```bash
+   pnpm install
+   ```
 
-# open the Drizzle Studio UI
-pnpm db:studio
-```
+3. **Set Up Environment Variables**  
+   Copy the example file and configure:  
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your details, e.g.:  
+   - `DATABASE_URL=postgresql://user:password@host:port/dbname`
 
-Schema lives in `src/database/schema`. Tables are exported via `schema/index.ts`, which keeps Drizzle types consistent both in the Nest container and the CLI tooling.
+## Database Workflow
 
-## Application layout
+1. **Generate Migrations**  
+   ```bash
+   pnpm db:generate
+   ```
 
-- `src/config` – Environment validation (`zod`) plus structured database config (`registerAs`).
-- `src/database/database.module.ts` – Global module that builds a pooled `pg` connection and exposes a typed Drizzle client.
-- `src/database/database.service.ts` – Lazily instantiates the pool, exposes `db` for repositories, performs graceful shutdown, and offers a cheap `ping`.
-- `src/database/schema` – Source of truth for all tables. Example `users` table demonstrates timestamps, UUIDs, and unique constraints.
-- `src/app.service.ts` – Shows how to consume the Drizzle client via dependency injection (the root route returns the current DB timestamp).
+2. **Apply Migrations**  
+   ```bash
+   pnpm db:migrate
+   ```
 
 ## Running the API
 
+### Development  
 ```bash
-# development
 pnpm start:dev
+```
 
-# production build + run
+### Production  
+```bash
 pnpm build && pnpm start:prod
 ```
 
-The Nest app refuses to serve traffic if it cannot reach the database, which protects downstream modules that rely on transactions.
-
-## Testing
-
-```bash
-pnpm test        # unit
-pnpm test:e2e    # e2e (DatabaseService is mocked)
-pnpm test:cov    # coverage
-```
-
-The e2e suite overrides `DatabaseService`, so tests run without a real Neon instance while the application code still expects a live Drizzle client in other environments.
+## Contributing
+Contributions are welcome! Fork the repo, make changes, and submit a pull request.
